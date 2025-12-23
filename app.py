@@ -2,6 +2,7 @@ from flask import Flask, request, Response
 import requests
 import json
 import re
+import os
 
 app = Flask(__name__)
 
@@ -16,10 +17,7 @@ def handle_request():
     # מחליף את שלושת התווים האחרונים ל־txt
     modified = what[:-3] + "txt"
 
-    url1 = (
-        "https://www.call2all.co.il/ym/api/GetTextFile"
-        f"?token={TOKEN}&what={modified}"
-    )
+    url1 = f"https://www.call2all.co.il/ym/api/GetTextFile?token={TOKEN}&what={modified}"
 
     try:
         r1 = requests.get(url1, timeout=10)
@@ -40,10 +38,7 @@ def handle_request():
 
     phone = match.group(1)
 
-    url2 = (
-        "https://www.call2all.co.il/ym/api/UpdateExtension"
-        f"?token={TOKEN}&path=ivr2:NIT&nitoviya_dial_to={phone}"
-    )
+    url2 = f"https://www.call2all.co.il/ym/api/UpdateExtension?token={TOKEN}&path=ivr2:NIT&nitoviya_dial_to={phone}"
 
     try:
         r2 = requests.get(url2, timeout=10)
@@ -55,4 +50,5 @@ def handle_request():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
